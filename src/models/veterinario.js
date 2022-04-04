@@ -50,6 +50,10 @@ if (!this.isModified("password")){
     this.password = await bcrypt.hash(this.password, salt);
 })
 
+veterinarioSchema.methods.comprobarPasword = async function (passwordForm){
+
+    return await bcrypt.compare(passwordForm, this.password );
+}
 
 const Veterinario = mongoose.model('Veterinario', veterinarioSchema);
 
