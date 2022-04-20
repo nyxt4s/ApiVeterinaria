@@ -15,7 +15,7 @@ const chekAuth = async (req, res, next) => {
             return next();
         }catch (e){
             const error = new Error ("Token no valido ");
-            res.status(403).json({msg: e.message});
+            res.status(403).json({msg: error.message});
 
         }
         console.log("desde mi middleware");

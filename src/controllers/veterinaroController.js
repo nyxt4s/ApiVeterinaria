@@ -1,13 +1,15 @@
 import Veterinario from "../models/veterinario.js";
 import generarJWT from "../../helpers/generajwt.js";
 import generarID from "../../helpers/generarId.js";
+import emailRegistro from "../../helpers/emailRegistro.js";
+import EmailOlvidePassword from "../../helpers/olvidePassword.js";
 
 const registrar = async (req, res) =>{
 
   try{ 
 
     // prevenir usuario duplicado
-    const { email } = req.body;
+    const { email, nombre  } = req.body;
 
     const existeUsuario = await Veterinario.findOne({email : email});
 
@@ -20,6 +22,8 @@ const registrar = async (req, res) =>{
     // guardar un nuevo usuario
     const veterinario = new Veterinario(req.body);
     const veterinarioGuardado = await  veterinario.save();
+    // enviar el correo al usuario de registro
+    emailRegistro( { email, nombre, token: veterinarioGuardado.token } );
     res.json({msg: "Usuario Registrado"});
    }
   }
@@ -61,6 +65,7 @@ const autenticar = async (req, res) => {
         msg: "Usuario logeado correctamente",
         token: generarJWT(usuario.id)
       });
+
     }else {
         const error = new Error ('Email o password incorrecto');
         return res.status(403).json({msg: error.message});
@@ -113,6 +118,8 @@ const recuperarPassword = async (req, res) =>{
     try {
       existeVeterinario.token = generarID();
       await existeVeterinario.save();
+      OlvidePassword({email, nombre : existeVeterinario.nombre, token : existeVeterinario.token });
+      // enviar email con las intrucciones
       res.json({msg: "hemos enviado un EMail con las intrucciones"});
     }catch(ex){
 

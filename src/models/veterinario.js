@@ -3,6 +3,7 @@ import generarID from "../../helpers/generarId.js";
 import bcrypt from "bcrypt";
 
 const veterinarioSchema = mongoose.Schema({
+    
     nombre: {
         type: String,
         required: true,
