@@ -11,8 +11,7 @@ const EmailOlvidePassword = async ( datos ) => {
           pass: process.env.EMAIL_PASS
         }
       });
-      console.log(transport);
-      console.log(datos);
+ 
       const { email, nombre, token } = datos;
     // Envio de email
        

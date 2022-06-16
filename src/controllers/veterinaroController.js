@@ -28,15 +28,17 @@ const registrar = async (req, res) =>{
    }
   }
   catch(ex){
-        console.log(ex);
+      const error = new Error ("ocurrio un problema con el servidor, intente mas tarde");
+      return res.status(404).json ({msg: error.message });
+
   };
 
 };
 
 const perfil = (req, res) => {
-    console.log(req);
-    const { veterinario } = req;
-    res.json({ perfil : veterinario });
+  
+    const { veterinario } = req;  
+    res.json({ veterinario });
   }
 
 
@@ -84,7 +86,6 @@ const confirmar = async (req, res) =>{
     const { token } = req.params;
     
     const usuarioConfirmar = await Veterinario.findOne({token: token});
-    console.log(usuarioConfirmar);
     
     if (usuarioConfirmar){ 
 
@@ -118,9 +119,8 @@ const recuperarPassword = async (req, res) =>{
     try {
       existeVeterinario.token = generarID();
       await existeVeterinario.save();
-      OlvidePassword({email, nombre : existeVeterinario.nombre, token : existeVeterinario.token });
-      // enviar email con las intrucciones
-      res.json({msg: "hemos enviado un EMail con las intrucciones"});
+      EmailOlvidePassword({email, nombre : existeVeterinario.nombre, token : existeVeterinario.token });
+      res.json({msg: "hemos enviado un Email con las intrucciones"});
     }catch(ex){
 
     }
@@ -130,8 +130,6 @@ const recuperarPassword = async (req, res) =>{
 
 const comprobarToken = async (req, res) =>{
       const { token } = req.params;
-      console.log(token);
-
       const tokenValido = await Veterinario.findOne({ token: token})
 
       if (tokenValido){
@@ -158,11 +156,10 @@ const nuevoPassword = async (req, res) =>{
   try {
     veterinario.token = null;
     veterinario.password = password;
-    await veterinario.save();
-
+    const resultado = await veterinario.save();
     res.json ({msg: "contraseña modificado correctamente"});
-    console.log(veterinario);
   }catch(ex){
+    console.log(ex);
 
   }
 }
